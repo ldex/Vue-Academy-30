@@ -21,5 +21,23 @@ export default {
                 console.error('API Error while loading products, ' + error); // log technical details in the service
                 return Promise.reject(error); // return the error to the component for a user facing message
             })
-  }
+  },
+
+  getProduct(id) {
+    const url = `${baseURL}/${resourceName}/${id}`;
+    const options = {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json;charset=UTF-8'
+        }
+    };
+
+    return fetch(url, options)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('API Error while loading product, ' + error);
+                return Promise.reject(error);
+            })
+  },
 }
