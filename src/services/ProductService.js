@@ -16,7 +16,7 @@ export default {
 
     return fetch(url, options) // fetch() returns a promise containing a response object
             .then(response => response.json()) // json() will parse the content and return a promise with the data as an object, here an array
-            .then(data => new Promise(resolve => setTimeout(() => resolve(data), 800)))  // slowing down the response for testing purpose...
+            .then(data => new Promise(resolve => setTimeout(() => resolve(data), 200)))  // slowing down the response for testing purpose...
             .catch(error => {
                 console.error('API Error while loading products, ' + error); // log technical details in the service
                 return Promise.reject(error); // return the error to the component for a user facing message

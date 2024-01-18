@@ -1,29 +1,110 @@
 <template>
     <div>
         <h2>{{ title }}</h2>
+        <fieldset class="filters">
+            Sort by:
+            <button @click="sort('name')">Name</button>
+            <button @click="sort('price')">Price</button>
+            <button @click="sort('modifiedDate')">Date</button>
+            <span> Filter by name: <input v-model="filterName" /></span>
+        </fieldset>
         <ul class="products">
-            <li v-for="product in products" v-bind:key="product.id"
-            :title="JSON.stringify(product)"
-            :class='{ discontinued: product.discontinued, selected: product.id === selectedProduct?.id }'
-            @click="selectedProduct = product">
+            <li v-for="product in sortedFilteredPaginatedProducts" v-bind:key="product.id" :title="JSON.stringify(product)"
+                :class='{ discontinued: product.discontinued, selected: product.id === selectedProduct?.id }'
+                @click="selectedProduct = product">
                 <span class="name">{{ product.name }}</span>
                 <span class="description">{{ product.description }}</span>
                 <span class="price">{{ product.price }}</span>
             </li>
         </ul>
+
+        <button @click="prevPage" :disabled="pageNumber === 1">
+            &lt; Previous
+        </button>
+        Page {{ pageNumber }}
+        <button @click="nextPage" :disabled="pageNumber >= pageCount">
+            Next &gt;
+        </button>
+
         <product-details :product="selectedProduct"></product-details>
     </div>
 </template>
 
 <script setup>
- import ProductDetails from '@/components/ProductDetails.vue';
- import { ref } from 'vue'
+import ProductDetails from '@/components/ProductDetails.vue';
+import { ref, computed, watch } from 'vue'
 
-const props = defineProps(['products'])
+const props = defineProps({
+    products: Array,
+    pageSize: {
+        type: Number,
+        required: false,
+        default: 5
+    }
+})
 
 let title = 'Products';
 const selectedProduct = ref(null);
+const filterName = ref('');
+const sortName = ref('modifiedDate');
+const sortDir = ref('desc');
+const pageNumber = ref(1);
 
+watch([filterName, sortName, sortDir], () => {
+    pageNumber.value = 1;
+})
+
+function nextPage() {
+    pageNumber.value++;
+    selectedProduct.value = null;
+}
+
+function prevPage() {
+    pageNumber.value--;
+    selectedProduct.value = null;
+}
+
+function sort(s) {
+    //if s == current sort, reverse order
+    if (s === sortName.value) {
+        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+    }
+    sortName.value = s;
+}
+
+const filteredProducts = computed(() => {
+    let filter = new RegExp(filterName.value, 'i')
+    return props.products.filter(el => el.name.match(filter))
+})
+
+const sortedFilteredProducts = computed(() => {
+    let modifier = 1;
+    if (sortDir.value === 'desc') modifier = -1;
+
+    return [...filteredProducts.value].sort((a, b) => {
+        if (sortName.value == 'name') {
+            return a.name.localeCompare(b.name) * modifier
+        }
+        else {
+            if (a[sortName.value] < b[sortName.value]) return -1 * modifier;
+            if (a[sortName.value] > b[sortName.value]) return 1 * modifier;
+            return 0;
+        }
+    })
+})
+
+const sortedFilteredPaginatedProducts = computed(() => {
+    const start = (pageNumber.value - 1) * props.pageSize,
+        end = start + props.pageSize;
+
+    return sortedFilteredProducts.value.slice(start, end);
+})
+
+const pageCount = computed(() => {
+    let l = filteredProducts.value.length,
+        s = props.pageSize;
+    return Math.ceil(l / s);
+})
 </script>
 
 <style lang="css" scoped>
@@ -133,4 +214,5 @@ const selectedProduct = ref(null);
 .products .discontinued,
 .products .discontinued * {
     color: red !important;
-}</style>
+}
+</style>

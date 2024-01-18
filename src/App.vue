@@ -1,35 +1,108 @@
 <script setup>
-import ProductService from '@/services/ProductService.js';
-import ProductList from './components/ProductList.vue'
 
-import { ref } from 'vue'
-
-const errorMessage = ref(null)
-const products = ref([])
-const isLoading = ref(false)
-
-isLoading.value = true;
-ProductService.getProducts()
-      .then(data => products.value = data)
-      .catch(error => {
-        errorMessage.value = 'There was an error getting products from server, ' + error;
-      })
-      .finally(() => isLoading.value = false);
 </script>
 
 <template>
-<section v-if="errorMessage" class="errorMessage">
-      {{errorMessage}}
-    </section>
-    <section v-else>
-      <div v-if="isLoading">
-        <div class="loader">Loading products...</div>
-      </div>
-      <product-list v-else :products="products"></product-list>
-    </section>
+<div id="app">
+    <h1>Vue Store</h1>
+    <nav>
+      <router-link to="/">Home</router-link>
+      <router-link to="/products">Products</router-link>
+      <router-link to="/about">About</router-link>
+    </nav>
+    <router-view/>
+    <hr />
+    <footer>Copyright Vue Academy 2024</footer>
+  </div>
 </template>
 
 <style scoped>
+h1 {
+  color: #42b983;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 250%;
+  margin: 0px;
+}
+h2, h3 {
+  color: #435466;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: lighter;
+}
+body {
+  margin: 2em;
+  margin-top: 0.5em;
+}
+body, input[text], button {
+  color: #888;
+  font-family: Cambria, Georgia;
+}
+a {
+  cursor: pointer;
+  cursor: hand;
+}
+button {
+  font-family: Arial;
+  background-color: #eee;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  cursor: hand;
+}
+button:hover {
+  background-color: #cfd8dc;
+}
+button:disabled {
+  background-color: #eee;
+  color: #aaa;
+  cursor: auto;
+}
+footer {
+  padding-top: 10px;
+  clear: both;
+}
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+/* Navigation link styles */
+nav a {
+  padding: 5px 10px;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+  background-color: #eee;
+  border-radius: 4px;
+}
+nav a:visited, a:link {
+  color: #607D8B;
+}
+nav a:hover {
+  color: #039be5;
+  background-color: #CFD8DC;
+}
+nav a.router-link-exact-active {
+  color: #FFF;
+  background-color: #42b983;
+}
+
+/* everywhere else */
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+*[disabled] {
+  cursor: not-allowed;
+}
+
+.home {
+  margin-bottom: 80px;
+  position: relative;
+}
 .errorMessage {
   color: red;
 }
