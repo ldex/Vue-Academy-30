@@ -11,13 +11,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onErrorCaptured } from 'vue'
 import ProductList from '@/components/ProductList.vue';
 import ProductService from '@/services/ProductService.js';
 
 const products = ref([]);
 const errorMessage = ref(null);
 const isLoading = ref(false);
+
+onErrorCaptured((error) => {
+  console.error('Error in component: ', error.message);
+  return true;
+});
 
 isLoading.value = true;
 ProductService.getProducts()

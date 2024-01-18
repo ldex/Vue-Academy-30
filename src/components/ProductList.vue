@@ -18,6 +18,10 @@
             </li>
         </ul>
 
+        <div class="right">
+            <router-link to="/product/insert">Create new product...</router-link>
+        </div>
+
         <button @click="prevPage" :disabled="pageNumber === 1">
             &lt; Previous
         </button>
@@ -35,8 +39,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 function onSelect(product) {
-      router.push({ name: "product", params: { id: product.id } });
-    }
+    router.push({ name: "product", params: { id: product.id } });
+}
 
 const props = defineProps({
     products: Array,

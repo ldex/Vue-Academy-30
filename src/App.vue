@@ -10,13 +10,35 @@
       <router-link to="/products">Products</router-link>
       <router-link to="/about">About</router-link>
     </nav>
-    <router-view/>
+    <router-view v-slot="{ Component }">
+      <transition name="page" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
     <hr />
     <footer>Copyright Vue Academy 2024</footer>
   </div>
 </template>
 
 <style scoped>
+/* transitions */
+@keyframes acrossIn {
+  0% { transform: translate3d(-100%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes acrossOut {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(100%, 0, 0); }
+}
+
+.page-enter-active {
+  animation: acrossIn .45s ease-out both;
+}
+
+.page-leave-active {
+  animation: acrossOut .65s ease-in both;
+}
 h1 {
   color: #42b983;
   font-family: Arial, Helvetica, sans-serif;
